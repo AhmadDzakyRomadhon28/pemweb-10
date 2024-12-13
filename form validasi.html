@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validasi Tiket</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+        .invalid {
+            border: 2px solid red;
+        }
+        .valid {
+            border: 2px solid green;
+        }
+        body.container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            margin: 1em auto;
+            background: aliceblue;
+            border-radius: 15px;
+            animation: fadeIn 1s ease-in-out;
+            box-shadow: 0 10px 20px black;
+        }
+    </style>
+</head>
+<body class="container">
+    <h2>Form Pemesanan Tiket</h2>
+    
+    <form id="tiketForm">
+        <!-- Nama Pelanggan -->
+        <label for="nama">Nama Pelanggan:</label>
+        <input type="text" id="nama" name="nama" required maxlength="30">
+        <div id="namaError" class="error"></div>
+        
+        <br><br>
+        
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <div id="emailError" class="error"></div>
+        
+        <br><br>
+        
+        <!-- Jam Keberangkatan -->
+        <label for="jam">Jam Keberangkatan:</label>
+        <input type="time" id="jam" name="jam" required placeholder="HH:MM">
+        <div id="jamError" class="error"></div>
+        
+        <br><br>
+        
+        <!-- Tujuan Keberangkatan -->
+        <label for="tujuan">Tujuan Keberangkatan:</label>
+        <input type="text" id="tujuan" name="tujuan" required>
+        <div id="tujuanError" class="error"></div>
+        
+        <br><br>
+        
+        <!-- Jumlah Tiket -->
+        <label for="jumlah">Jumlah Tiket:</label>
+        <input type="number" id="jumlah" name="jumlah" required min="1" max="10">
+        <div id="jumlahError" class="error"></div>
+        
+        <br><br>
+        
+        <!-- Tombol Submit -->
+        <button type="submit">Submit</button>
+    </form>
+
+    <h3>Hasil Input:</h3>
+    <div id="hasil"></div>
+
+    <script>
+        document.getElementById("tiketForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // Mencegah form dikirim
+
+            let isValid = true;
+            clearErrors();
+
+            // Ambil data dari form
+            const nama = document.getElementById("nama").value;
+            const email = document.getElementById("email").value;
+            const jam = document.getElementById("jam").value;
+            const tujuan = document.getElementById("tujuan").value;
+            const jumlah = document.getElementById("jumlah").value;
+
+            // Validasi Nama
+            if (nama.trim() === "" || nama.length > 30) {
+                showError("nama", "Nama pelanggan harus diisi dan maksimal 30 karakter.");
+                isValid = false;
+            }
+
+            // Validasi Email
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                showError("email", "Email tidak valid.");
+                isValid = false;
+            }
+
+            // Validasi Jam Keberangkatan
+            const jamPattern = /^(?:[01]\d|2[0-3]):([0-5]\d)$/;
+            if (!jamPattern.test(jam)) {
+                showError("jam", "Jam harus diisi dengan format HH:MM (00:00 - 23:59).");
+                isValid = false;
+            }
+
+            // Validasi Tujuan Keberangkatan
+            if (tujuan.trim() === "") {
+                showError("tujuan", "Tujuan keberangkatan harus diisi.");
+                isValid = false;
+            }
+
+            // Validasi Jumlah Tiket
+            if (jumlah < 1 || jumlah > 10 || isNaN(jumlah)) {
+                showError("jumlah", "Jumlah tiket harus diisi dengan angka antara 1 dan 10.");
+                isValid = false;
+            }
+
+            // Jika validasi berhasil, tampilkan hasil
+            if (isValid) {
+                document.getElementById("hasil").innerHTML = `
+                    <p><strong>Nama Pelanggan:</strong> ${nama}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Jam Keberangkatan:</strong> ${jam}</p>
+                    <p><strong>Tujuan Keberangkatan:</strong> ${tujuan}</p>
+                    <p><strong>Jumlah Tiket:</strong> ${jumlah}</p>
+                `;
+            }
+        });
+
+        // Fungsi untuk menampilkan pesan error
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + "Error");
+            errorElement.textContent = message;
+            document.getElementById(fieldId).classList.add("invalid");
+        }
+
+        // Fungsi untuk menghapus semua pesan error
+        function clearErrors() {
+            const errorElements = document.querySelectorAll(".error");
+            errorElements.forEach(function(errorElement) {
+                errorElement.textContent = "";
+            });
+            const inputFields = document.querySelectorAll("input");
+            inputFields.forEach(function(inputField) {
+                inputField.classList.remove("invalid");
+            });
+        }
+    </script>
+</body>
+</html>
